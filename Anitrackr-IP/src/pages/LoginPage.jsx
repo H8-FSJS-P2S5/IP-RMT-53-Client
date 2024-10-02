@@ -38,6 +38,7 @@ const LoginPage = () => {
 
       // Handle successful login response
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("id", data.id)
       localStorage.setItem("username", data.username);
 
       Swal.fire({

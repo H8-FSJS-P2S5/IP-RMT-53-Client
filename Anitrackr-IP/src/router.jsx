@@ -9,6 +9,16 @@ import NotFoundPage from "./pages/NotFoundPage";
 // import UserProfilePage from "./pages/UserProfilePage";
 import AnimeList from "./components/AnimeList";
 
+const isLoggedIn = () => {  
+  const token = localStorage.getItem("access_token");  
+  return !token ? redirect("/login") : null;  
+};  
+
+const isNotLoggedIn = () => {
+  const token = localStorage.getItem('access_token')
+  return token ? redirect('/') : null;
+}
+
 const router = createBrowserRouter([ 
     {
         path: '/',
@@ -16,27 +26,32 @@ const router = createBrowserRouter([
         children: [
           {
             path: 'register',
-            element: <RegisterPage />
+            element: <RegisterPage />,
+            loader: isNotLoggedIn
           },
           {
             path: '/login',
-            element: <LoginPage />
+            element: <LoginPage />,
+            loader: isNotLoggedIn
           },
           {
             path: '/',
-            element: <HomePage />
+            element: <HomePage />,
+            loader: isLoggedIn
           },
           {
             path: '/user/:id/anime-list',
-            element: <AnimeList />
+            element: <AnimeList />,
+            loader: isLoggedIn
           },
           {
             path: '/anime/search',
-            element: <SearchPage />
+            element: <SearchPage />,
+            loader: isLoggedIn
           },
           {
             path: '/anime/:id',
-            element: <AnimeDetailPage />
+            element: <AnimeDetailPage />,
           },
           {
             path: '*',

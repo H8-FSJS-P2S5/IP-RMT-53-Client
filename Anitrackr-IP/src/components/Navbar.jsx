@@ -1,13 +1,27 @@
 import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';  
-import { Link } from 'react-router-dom';  
+import { Link, useNavigate } from 'react-router-dom'; 
+// import { jwtDecode } from "jwt-decode"; 
 
 const Navbar = () => {  
-  // Define your pages here with the correct paths  
+
+  const token = localStorage.getItem("access_token")
+  const userId = localStorage.getItem("id")
+
+  const navigate = useNavigate();  
+ 
   const pages = [
     { name: 'Home', path: '/' },
-    { name: 'Anime List', path: '/user/:id/anime-list' },
+    { name: 'Anime List', path: `/user/${userId}/anime-list` },
     { name: 'Search', path: '/anime/search' },
   ];  
+
+  const handleLogout = () => {  
+    localStorage.clear()  
+    navigate('/'); 
+  };  
+
+  const isLoggedIn = !!token; 
+
 
   return (  
     <AppBar position="fixed" sx={{ backgroundColor: '#fcfcfc' }}>  
@@ -46,22 +60,42 @@ const Navbar = () => {
             ))}  
           </Box>  
 
-          {/* LOGIN AND REGISTER LINKS */}  
+          {/* LOGIN AND REGISTER LINKS OR PROFILE AND LOGOUT LINKS */}  
           <Box sx={{ display: 'flex', alignItems: 'center' }}>  
-            <Button  
-              component={Link}  
-              to="/login"   
-              sx={{ color: 'black', mx: 1 }}  
-            >  
-              Login  
-            </Button>  
-            <Button  
-              component={Link}  
-              to="/register"   
-              sx={{ color: 'black', mx: 1 }}  
-            >  
-              Register  
-            </Button>  
+            {isLoggedIn ? (  
+              <>  
+                <Button  
+                  component={Link}  
+                  to={`/user/${userId}/profile`} // assuming a profile path exists  
+                  sx={{ color: 'black', mx: 1 }}  
+                >  
+                  Profile  
+                </Button>  
+                <Button  
+                  onClick={handleLogout} // Handle logout on click  
+                  sx={{ color: 'black', mx: 1 }}  
+                >  
+                  Logout  
+                </Button>  
+              </>  
+            ) : (  
+              <>  
+                <Button  
+                  component={Link}  
+                  to="/login"   
+                  sx={{ color: 'black', mx: 1 }}  
+                >  
+                  Login  
+                </Button>  
+                <Button  
+                  component={Link}  
+                  to="/register"   
+                  sx={{ color: 'black', mx: 1 }}  
+                >  
+                  Register  
+                </Button>  
+              </>  
+            )}  
           </Box>  
 
         </Toolbar>  

@@ -2,23 +2,26 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import request from "../utils/request";
 import { jwtDecode } from "jwt-decode";
-import AnimeCard from "./AnimeCard"; // Import the AnimeCard component
+import AnimeCard from "./AnimeCard"; 
 
 const AnimeList = () => {
   const [animeList, setAnimeList] = useState([]);
 
   const token = localStorage.getItem("access_token");
   const decoded = jwtDecode(token);
-  const userId = decoded.id; // Get userId from the decoded token
+  const userId = decoded.id; 
 
   useEffect(() => {
-    // Fetch the user's anime list when the component mounts
     const fetchAnimeList = async () => {
       try {
         const response = await request({
           method: "get",
           url: `/api/user/${userId}/anime-list`,
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("access_token"),
+          },
         });
+
         setAnimeList(response.data);
       } catch (error) {
         Swal.fire({

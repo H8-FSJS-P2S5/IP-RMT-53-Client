@@ -1,16 +1,13 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import request from "../utils/request";
-import { jwtDecode } from "jwt-decode";
-
 
 const SearchPage = () => {
   const [searchedAnime, setSearchedAnime] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const token = localStorage.getItem("access_token");
-  const decoded = jwtDecode(token);
-  const userId = decoded.id;
+  const userId = localStorage.getItem("id")
 
   const searchAnime = async (e) => {
     e.preventDefault(); // Prevent form submission default behavior
@@ -42,16 +39,19 @@ const SearchPage = () => {
       const response = await request({
         method: "post",
         url: `/api/user/${userId}/anime-list`,
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
         data: { malId },
       });
 
-      if (!token) {  
-        Swal.fire({  
-          title: "Error!",  
-          text: "You must be logged in to add an anime to your list.",  
-          icon: "error",  
-          confirmButtonText: "Ok",  
-        });  
+      if (!token) {
+        Swal.fire({
+          title: "Error!",
+          text: "You must be logged in to add an anime to your list.",
+          icon: "error",
+          confirmButtonText: "Ok",
+        });
         return;
       }
 
