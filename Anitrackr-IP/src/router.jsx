@@ -6,7 +6,8 @@ import HomePage from "./pages/HomePage";
 import AnimeDetailPage from "./pages/AnimeDetailPage";
 import SearchPage from "./pages/SearchPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import UserProfilePage from "./pages/UserProfilePage";
+// import UserProfilePage from "./pages/UserProfilePage";
+import AnimeList from "./components/AnimeList";
 
 const router = createBrowserRouter([ 
     {
@@ -27,7 +28,7 @@ const router = createBrowserRouter([
           },
           {
             path: '/user/:id/anime-list',
-            element: <UserProfilePage />
+            element: <AnimeList />
           },
           {
             path: '/anime/search',
