@@ -5,9 +5,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme({
   typography: {
-    fontFamily: "'Roboto Serif', serif", // Default font for body text
+    fontFamily: "'Roboto Serif', serif", 
     h1: {
-      fontFamily: "'Exo 2', sans-serif", // Specific font for h1 headings
+      fontFamily: "'Exo 2', sans-serif", 
     },
   },
 });

@@ -1,4 +1,4 @@
-import { Button, Container, Typography, Box } from "@mui/material";
+import { Button, Container, Typography, Box, Grid, Card, CardContent, CardMedia } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -14,7 +14,6 @@ const AnimeDetailPage = () => {
         method: "get",
         url: `/anime/${id}`,
       });
-      console.log(response)
       setAnime(response.data);
     } catch (error) {
       Swal.fire({
@@ -33,25 +32,73 @@ const AnimeDetailPage = () => {
   }, [id]);
 
   return (
-    <>
-      <Container>
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="h4">{anime?.title}</Typography>
-          <img
-            src={anime?.images?.jpg?.image_url}
+    <Container maxWidth="md" sx={{ mt: 9 }}>
+      {anime ? (
+        <Card
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            boxShadow: 3,
+            borderRadius: '12px',
+            overflow: 'hidden',
+          }}
+        >
+          <CardMedia
+            component="img"
+            image={anime?.images?.jpg?.image_url}
             alt={anime?.title}
-            style={{ width: "200px" }}
+            sx={{
+              width: { xs: '100%', sm: '300px' },
+              height: 'auto',
+              objectFit: 'cover',
+            }}
           />
-          <Typography variant="h6">Synopsis:</Typography>
-          <Typography>{anime?.synopsis}</Typography>
-          <Typography variant="h6">Episodes:</Typography>
-          <Typography>{anime?.episodes}</Typography>
-          <Button variant="contained" onClick={() => window.history.back()}>
-            Back
-          </Button>
-        </Box>
-      </Container>
-    </>
+
+          <CardContent
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              padding: 3,
+            }}
+          >
+            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
+              {anime?.title}
+            </Typography>
+
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              <strong>Synopsis:</strong> {anime?.synopsis}
+            </Typography>
+
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              <strong>Episodes:</strong> {anime?.episodes || 'N/A'}
+            </Typography>
+
+            <Typography variant="body1" sx={{ mb: 2 }}>
+              <strong>Genres:</strong>{' '}
+              {anime?.genres?.map((genre) => genre.name).join(', ') || 'N/A'}
+            </Typography>
+
+            <Typography variant="body1" sx={{ mb: 4 }}>
+              <strong>Score:</strong> {anime?.score || 'N/A'}
+            </Typography>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => window.history.back()}
+              sx={{ alignSelf: 'flex-start' }}
+            >
+              Back
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Typography variant="h6" align="center">
+          Loading anime details...
+        </Typography>
+      )}
+    </Container>
   );
 };
 

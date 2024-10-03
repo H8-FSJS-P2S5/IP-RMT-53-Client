@@ -20,6 +20,8 @@ const isNotLoggedIn = () => {
   return token ? redirect('/') : null;
 }
 
+
+
 const router = createBrowserRouter([ 
     {
         path: '/',

@@ -6,7 +6,6 @@ import AnimeCard from "../components/AnimeCard";
 const AnimeList = () => {
   const [animeList, setAnimeList] = useState([]);
 
-
   useEffect(() => {
     const fetchAnimeList = async () => {
       try {
@@ -68,10 +67,12 @@ const AnimeList = () => {
           <AnimeCard
             key={anime?.animeId}
             title={anime?.Anime?.title}
+            genre={anime?.Anime?.genre}
             imageUrl={anime?.Anime?.imageUrl}
             score={anime?.Anime?.score}
             synopsis={anime?.Anime?.synopsis}
-            onRemove={() => removeAnimeFromList(anime.animeId)}
+            episodes={anime?.Anime?.episodes}
+            onRemove={() => removeAnimeFromList(anime.animeId)} // Pass the remove function to AnimeCard
           />
         ))
       ) : (
