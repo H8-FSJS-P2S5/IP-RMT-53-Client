@@ -1,16 +1,19 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import request from "../utils/request";
+import { IconButton } from "@mui/material";
+import BookmarkAddIcon from "@mui/icons-material/Bookmark";
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 
 const SearchPage = () => {
   const [searchedAnime, setSearchedAnime] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [addedAnimeIds, setAddedAnimeIds] = useState(new Set()); // Track added anime IDs
 
   const token = localStorage.getItem("access_token");
-  const userId = localStorage.getItem("id")
 
   const searchAnime = async (e) => {
-    e.preventDefault(); // Prevent form submission default behavior
+    e.preventDefault();
 
     try {
       const response = await request({
@@ -35,25 +38,28 @@ const SearchPage = () => {
   };
 
   const addAnimeToList = async (malId) => {
+    if (!token) {
+      Swal.fire({
+        title: "Error!",
+        text: "You must be logged in to add an anime to your list.",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+      return;
+    }
+
     try {
       const response = await request({
         method: "post",
-        url: `/api/user/${userId}/anime-list`,
+        url: `/api/user/me/anime-list`,
         headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
+          Authorization: "Bearer " + token,
         },
         data: { malId },
       });
 
-      if (!token) {
-        Swal.fire({
-          title: "Error!",
-          text: "You must be logged in to add an anime to your list.",
-          icon: "error",
-          confirmButtonText: "Ok",
-        });
-        return;
-      }
+      // Update addedAnimeIds to include the newly added anime
+      setAddedAnimeIds((prev) => new Set(prev).add(malId));
 
       Swal.fire({
         title: "Success!",
@@ -89,22 +95,28 @@ const SearchPage = () => {
       {searchedAnime.length > 0 && (
         <div>
           <h2>Search Results:</h2>
-          <ul>
+          <ul style={{ listStyleType: "none", padding: 0 }}>
             {searchedAnime.map((anime, index) => (
-              <li key={`${anime.mal_id}-${index}`}>
-                <h3>{anime.title}</h3>
+              <li key={`${anime.mal_id}-${index}`} style={{ marginBottom: "15px" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <h3 style={{ margin: 0 }}>{anime.title}</h3>
+                  <IconButton 
+                    onClick={() => addAnimeToList(anime.mal_id)} 
+                    color="primary" 
+                    style={{ marginLeft: "8px" }}
+                  >
+                    {addedAnimeIds.has(anime.mal_id) ? <BookmarkAddIcon /> : <BookmarkBorderIcon />}
+                  </IconButton>
+                </div>
                 <img
                   src={anime.images.jpg.image_url}
                   alt={anime.title}
-                  style={{ width: "100px" }}
+                  style={{ width: "100px", marginRight: "10px" }}
                 />
                 <p>Score: {anime.score}</p>
                 <p>Episodes: {anime.episodes}</p>
                 <p>Genres: {anime.genres.map((g) => g.name).join(", ")}</p>
                 <p>{anime.synopsis}</p>
-                <button onClick={() => addAnimeToList(anime.mal_id)}>
-                  Add to My Anime List
-                </button>
               </li>
             ))}
           </ul>

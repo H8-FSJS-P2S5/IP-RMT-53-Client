@@ -1,27 +1,23 @@
 import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';  
 import { Link, useNavigate } from 'react-router-dom'; 
-// import { jwtDecode } from "jwt-decode"; 
 
 const Navbar = () => {  
-
-  const token = localStorage.getItem("access_token")
-  const userId = localStorage.getItem("id")
+  const token = localStorage.getItem("access_token");
 
   const navigate = useNavigate();  
- 
+
   const pages = [
     { name: 'Home', path: '/' },
-    { name: 'Anime List', path: `/user/${userId}/anime-list` },
+    { name: 'Anime List', path: `/user/me/anime-list` }, // Updated to use 'me'
     { name: 'Search', path: '/anime/search' },
   ];  
 
   const handleLogout = () => {  
-    localStorage.clear()  
+    localStorage.clear();  
     navigate('/'); 
   };  
 
   const isLoggedIn = !!token; 
-
 
   return (  
     <AppBar position="fixed" sx={{ backgroundColor: '#fcfcfc' }}>  
@@ -32,8 +28,8 @@ const Navbar = () => {
           <Typography  
             variant="h6"  
             noWrap  
-            component="a"  
-            href="/"  
+            component={Link}  
+            to={"/"}  
             sx={{  
               display: 'flex',  
               mr: 2,  
@@ -50,9 +46,9 @@ const Navbar = () => {
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-start' }}>  
             {pages.map((page) => (  
               <Button  
-                key={page.name} // Use page name as key since it's unique  
+                key={page.name} 
                 component={Link}  
-                to={page.path} // Use the defined path for each page  
+                to={page.path} 
                 sx={{ color: 'black', mx: 1 }}  
               >  
                 {page.name}  
@@ -66,13 +62,13 @@ const Navbar = () => {
               <>  
                 <Button  
                   component={Link}  
-                  to={`/user/${userId}/profile`} // assuming a profile path exists  
+                  to="/user/me/profile"
                   sx={{ color: 'black', mx: 1 }}  
                 >  
                   Profile  
                 </Button>  
                 <Button  
-                  onClick={handleLogout} // Handle logout on click  
+                  onClick={handleLogout}
                   sx={{ color: 'black', mx: 1 }}  
                 >  
                   Logout  
@@ -104,4 +100,4 @@ const Navbar = () => {
   );  
 };  
 
-export default Navbar;
+export default Navbar; 

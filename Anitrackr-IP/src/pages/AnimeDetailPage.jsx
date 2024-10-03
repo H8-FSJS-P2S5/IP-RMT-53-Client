@@ -12,7 +12,7 @@ const AnimeDetailPage = () => {
     try {
       const response = await request({
         method: "get",
-        url: `/anime/${id}`, // Adjust this URL according to your backend route
+        url: `/anime/${id}`,
       });
       console.log(response)
       setAnime(response.data);

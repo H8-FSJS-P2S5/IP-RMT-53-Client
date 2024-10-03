@@ -1,22 +1,18 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import request from "../utils/request";
-import { jwtDecode } from "jwt-decode";
-import AnimeCard from "./AnimeCard"; 
+import AnimeCard from "../components/AnimeCard"; 
 
 const AnimeList = () => {
   const [animeList, setAnimeList] = useState([]);
 
-  const token = localStorage.getItem("access_token");
-  const decoded = jwtDecode(token);
-  const userId = decoded.id; 
 
   useEffect(() => {
     const fetchAnimeList = async () => {
       try {
         const response = await request({
           method: "get",
-          url: `/api/user/${userId}/anime-list`,
+          url: `/api/user/me/anime-list`, 
           headers: {
             Authorization: "Bearer " + localStorage.getItem("access_token"),
           },
@@ -34,16 +30,18 @@ const AnimeList = () => {
     };
 
     fetchAnimeList();
-  }, [userId]);
+  }, []);
 
   const removeAnimeFromList = async (animeId) => {
     try {
       await request({
         method: "delete",
-        url: `/api/user/${userId}/anime-list/${animeId}`,
+        url: `/api/user/me/anime-list/${animeId}`, 
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        }
       });
 
-      // Update the anime list after removing the anime
       setAnimeList(animeList.filter((anime) => anime.animeId !== animeId));
 
       Swal.fire({
@@ -73,7 +71,7 @@ const AnimeList = () => {
             imageUrl={anime?.Anime?.imageUrl}
             score={anime?.Anime?.score}
             synopsis={anime?.Anime?.synopsis}
-            onRemove={() => removeAnimeFromList(anime.animeId)} // Handle removing anime
+            onRemove={() => removeAnimeFromList(anime.animeId)}
           />
         ))
       ) : (

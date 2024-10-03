@@ -8,14 +8,13 @@ const UserProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   
   const token = localStorage.getItem('access_token');
-  const userId = localStorage.getItem('id')
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
         const response = await request({
           method: 'get',
-          url: `/api/user/${userId}`,
+          url: `/api/user/me`,
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -33,7 +32,7 @@ const UserProfilePage = () => {
     };
 
     fetchUserInfo();
-  }, [userId, token]);
+  }, [token]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -48,7 +47,7 @@ const UserProfilePage = () => {
     try {
       await request({
         method: 'put',
-        url: `/api/user/${userId}/username`,
+        url: `/api/user/me/username`,
         headers: {
           Authorization: `Bearer ${token}`,
         },

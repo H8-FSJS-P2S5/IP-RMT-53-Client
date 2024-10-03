@@ -87,8 +87,8 @@ const HomePage = () => {
               {popularAnime.map((anime, index) => {
                 const uniqueKey = `${anime.mal_id}-${index}`;
                 const genreList =
-                  anime.genres.map((genre) => genre.name).join(", ") || "N/A"; // Get genres
-                // Add ref to the last element for infinite scroll detection
+                  anime.genres.map((genre) => genre.name).join(", ") || "N/A";
+
                 if (popularAnime.length === index + 1) {
                   return (
                     <Grid
