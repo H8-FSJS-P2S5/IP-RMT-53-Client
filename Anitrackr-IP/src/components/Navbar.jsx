@@ -8,7 +8,7 @@ const Navbar = () => {
 
   const pages = [
     { name: 'Home', path: '/' },
-    { name: 'Anime List', path: `/user/me/anime-list` }, // Updated to use 'me'
+    { name: 'Anime List', path: `/user/me/anime-list` },
     { name: 'Search', path: '/anime/search' },
   ];  
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import request from "../utils/request";
 import { IconButton } from "@mui/material";
@@ -8,9 +8,34 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 const SearchPage = () => {
   const [searchedAnime, setSearchedAnime] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [addedAnimeIds, setAddedAnimeIds] = useState(new Set()); // Track added anime IDs
+  const [addedAnimeIds, setAddedAnimeIds] = useState(new Set());
 
   const token = localStorage.getItem("access_token");
+
+  // Fetch user's anime list on component mount
+  useEffect(() => {
+    const fetchUserAnimeList = async () => {
+      if (!token) return; // Exit if not logged in
+
+      try {
+        const response = await request({
+          method: "get",
+          url: "/api/user/me/anime-list",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        // Create a Set of anime IDs from the user's anime list
+        const ids = new Set(response.data.map(anime => anime.Anime.malId));
+        setAddedAnimeIds(ids);
+      } catch (error) {
+        console.error("Failed to fetch anime list:", error);
+      }
+    };
+
+    fetchUserAnimeList();
+  }, [token]);
 
   const searchAnime = async (e) => {
     e.preventDefault();
@@ -58,7 +83,6 @@ const SearchPage = () => {
         data: { malId },
       });
 
-      // Update addedAnimeIds to include the newly added anime
       setAddedAnimeIds((prev) => new Set(prev).add(malId));
 
       Swal.fire({
@@ -85,7 +109,7 @@ const SearchPage = () => {
         <input
           type="text"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+          onChange={(e) => setSearchQuery(e.target.value)} 
           placeholder="Search for an anime..."
           required
         />
