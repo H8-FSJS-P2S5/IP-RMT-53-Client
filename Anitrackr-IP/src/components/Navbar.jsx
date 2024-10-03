@@ -25,7 +25,7 @@ const Navbar = () => {
 
   return (  
     <AppBar position="fixed" sx={{ backgroundColor: '#fcfcfc' }}>  
-      <Container maxWidth="xl" disableGutters>  
+      <Container maxWidth="xxl" disableGutters>  
         <Toolbar disableGutters>  
 
           {/* LOGO */}  

@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Container, Typography, TextField, Button, Card, CardContent, Box } from '@mui/material';
 import Swal from 'sweetalert2';
-import request from '../utils/request'; // Adjust the import according to your project structure
-import { jwtDecode } from 'jwt-decode';
+import request from '../utils/request';
 
 const UserProfilePage = () => {
   const [userInfo, setUserInfo] = useState({ username: '', email: '' });
   const [isEditing, setIsEditing] = useState(false);
   
   const token = localStorage.getItem('access_token');
-  const decoded = jwtDecode(token);
-  const userId = decoded.id;
+  const userId = localStorage.getItem('id')
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -22,6 +20,7 @@ const UserProfilePage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+
         setUserInfo(response.data);
       } catch (error) {
         Swal.fire({
@@ -49,11 +48,11 @@ const UserProfilePage = () => {
     try {
       await request({
         method: 'put',
-        url: `/api/user/${userId}`,
+        url: `/api/user/${userId}/username`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: { username: userInfo.username }, // Assuming only username is editable
+        data: { username: userInfo.username },
       });
       Swal.fire({
         title: 'Success!',

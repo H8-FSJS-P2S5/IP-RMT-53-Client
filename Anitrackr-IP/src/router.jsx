@@ -8,6 +8,7 @@ import SearchPage from "./pages/SearchPage";
 import NotFoundPage from "./pages/NotFoundPage";
 // import UserProfilePage from "./pages/UserProfilePage";
 import AnimeList from "./components/AnimeList";
+import UserProfilePage from "./pages/UserProfilePage";
 
 const isLoggedIn = () => {  
   const token = localStorage.getItem("access_token");  
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
           {
             path: '/',
             element: <HomePage />,
+            loader: isLoggedIn
+          },
+          {
+            path: '/user/:id/profile',
+            element: <UserProfilePage />,
             loader: isLoggedIn
           },
           {
