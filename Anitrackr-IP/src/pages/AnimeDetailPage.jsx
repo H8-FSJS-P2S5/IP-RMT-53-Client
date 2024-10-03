@@ -14,6 +14,7 @@ const AnimeDetailPage = () => {
         method: "get",
         url: `/anime/${id}`,
       });
+
       setAnime(response.data);
     } catch (error) {
       Swal.fire({
