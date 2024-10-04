@@ -9,6 +9,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 // import UserProfilePage from "./pages/UserProfilePage";
 import UserProfilePage from "./pages/UserProfilePage";
 import AnimeList from "./pages/AnimeList";
+import AnimeDetail from "./components/AnimeDetail";
 
 const isLoggedIn = () => {  
   const token = localStorage.getItem("access_token");  
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
           },
           {
             path: '/anime/:id',
-            element: <AnimeDetailPage />,
+            element: <AnimeDetail/>,
           },
           {
             path: '*',

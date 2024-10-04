@@ -90,7 +90,7 @@ const LoginPage = () => {
         password: "",
       });
 
-      nav("/home");
+      nav("/");
 
       Swal.fire({
         title: "Good job!",
@@ -147,7 +147,14 @@ const LoginPage = () => {
             </Typography>
             <Divider sx={{ flex: 1 }} />
           </Box>
-          <div style={{ marginTop: "1rem", }} id="buttonDiv"></div>
+          <div
+            style={{
+              marginTop: "1rem",
+              display: "flex",
+              justifyContent: "center", // Center horizontally
+            }}
+            id="buttonDiv"
+          ></div>
         </form>
       </Box>
     </Container>

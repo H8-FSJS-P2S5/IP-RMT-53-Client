@@ -19,7 +19,6 @@ const UserProfilePage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         setUserInfo(response.data);
       } catch (error) {
         Swal.fire({
@@ -53,6 +52,7 @@ const UserProfilePage = () => {
         },
         data: { username: userInfo.username },
       });
+
       Swal.fire({
         title: 'Success!',
         text: 'Username updated successfully.',

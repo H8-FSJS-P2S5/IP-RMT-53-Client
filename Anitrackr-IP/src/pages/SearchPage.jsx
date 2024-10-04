@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import request from "../utils/request";
-import { IconButton } from "@mui/material";
+import SearchBar from "../components/SearchBar";
+import { IconButton } from "@mui/material"; 
 import BookmarkAddIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import jikan from "../utils/jikan";
 
 const SearchPage = () => {
   const [searchedAnime, setSearchedAnime] = useState([]);
@@ -12,10 +14,9 @@ const SearchPage = () => {
 
   const token = localStorage.getItem("access_token");
 
-  // Fetch user's anime list on component mount
   useEffect(() => {
     const fetchUserAnimeList = async () => {
-      if (!token) return; // Exit if not logged in
+      if (!token) return;
 
       try {
         const response = await request({
@@ -26,8 +27,7 @@ const SearchPage = () => {
           },
         });
 
-        // Create a Set of anime IDs from the user's anime list
-        const ids = new Set(response.data.map(anime => anime.Anime.malId));
+        const ids = new Set(response.data.map((anime) => anime.Anime.malId));
         setAddedAnimeIds(ids);
       } catch (error) {
         console.error("Failed to fetch anime list:", error);
@@ -37,19 +37,18 @@ const SearchPage = () => {
     fetchUserAnimeList();
   }, [token]);
 
-  const searchAnime = async (e) => {
-    e.preventDefault();
-
+  const searchAnime = async (query) => {
     try {
-      const response = await request({
+      const response = await jikan({
         method: "get",
-        url: "/anime/search",
+        url: "/anime",
         params: {
-          q: searchQuery,
+          q: query,
         },
       });
 
       setSearchedAnime(response.data.data);
+      return response.data.data;
     } catch (error) {
       Swal.fire({
         title: "Error!",
@@ -59,6 +58,33 @@ const SearchPage = () => {
         icon: "error",
         confirmButtonText: "Cool",
       });
+    }
+  };
+
+  const postAnimeToBackend = async (animeData) => {
+    try {
+      const response = await request({
+        method: "post",
+        url: "/api/anime/store",
+        data: animeData,
+      });
+
+      return response.data;
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to store anime data.",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
+  };
+
+  const handleAnimeSearch = async (query) => {
+    const animeData = await searchAnime(query);
+
+    if (animeData.length > 0) {
+      await postAnimeToBackend(animeData);
     }
   };
 
@@ -105,31 +131,33 @@ const SearchPage = () => {
   return (
     <>
       <h1>Search Page</h1>
-      <form onSubmit={searchAnime} style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)} 
-          placeholder="Search for an anime..."
-          required
-        />
-        <button type="submit">Search</button>
-      </form>
-
+      <SearchBar 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        handleSearch={handleAnimeSearch} // Pass the search function as a prop
+      />
       {searchedAnime.length > 0 && (
         <div>
           <h2>Search Results:</h2>
           <ul style={{ listStyleType: "none", padding: 0 }}>
             {searchedAnime.map((anime, index) => (
-              <li key={`${anime.mal_id}-${index}`} style={{ marginBottom: "15px" }}>
+              <li
+                key={`${anime.mal_id}-${index}`}
+                style={{ marginBottom: "15px" }}
+              >
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <h3 style={{ margin: 0 }}>{anime.title}</h3>
-                  <IconButton 
-                    onClick={() => addAnimeToList(anime.mal_id)} 
-                    color="primary" 
+                  <IconButton
+                    onClick={() => addAnimeToList(anime.mal_id)}
+                    color="primary"
                     style={{ marginLeft: "8px" }}
+                    sx={{ fontSize: "large" }}
                   >
-                    {addedAnimeIds.has(anime.mal_id) ? <BookmarkAddIcon /> : <BookmarkBorderIcon />}
+                    {addedAnimeIds.has(anime.mal_id) ? (
+                      <BookmarkAddIcon />
+                    ) : (
+                      <BookmarkBorderIcon />
+                    )}
                   </IconButton>
                 </div>
                 <img
