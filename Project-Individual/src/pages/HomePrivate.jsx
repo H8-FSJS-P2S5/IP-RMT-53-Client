@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { request } from "../util/axios";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { setPrivate } from "../features/PrivateSlice";
 
 export default function HomePrivate() {
-  const [art, setArt] = useState([]);
+  const dispatch = useDispatch();
+  
+  const art = useSelector((store) => store.private.privates); 
 
   const fetchArt = async () => {
     try {
@@ -15,47 +19,45 @@ export default function HomePrivate() {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
-      setArt(response.data.data);
-     
+      dispatch(setPrivate(response.data.data));
     } catch (error) {
       Swal.fire({
         title: "Error",
-        text: error.response.data.message,
+        text: error.response?.data?.message || "Something went wrong!",
         icon: "error",
         confirmButtonText: "Cool",
       });
     }
   };
 
-  const handelDelete = async (id) => {
+  const handleDelete = async (id) => {
     try {
       await request.delete(`/user/delete/private/arts/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       });
+      dispatch(setPrivate(art.filter((item) => item.id !== id)));
 
-      setArt((data) => data.filter((art) => art.id !== id));
-      console.log(`Post with ID ${id} deleted successfully`);
       Swal.fire({
         title: "Good job!",
-        text: "Data Berhasil Di Hapus",
+        text: "Data successfully deleted",
         icon: "success",
       });
     } catch (error) {
       Swal.fire({
         title: "Error",
-        text: error.response.data.message,
+        text: error.response?.data?.message || "Something went wrong!",
         icon: "error",
         confirmButtonText: "Cool",
       });
     }
   };
 
-
   useEffect(() => {
     fetchArt();
   }, []);
+
   return (
     <>
       <div className="container mt-5">
@@ -85,21 +87,12 @@ export default function HomePrivate() {
                     />
                   </td>
                   <td>
-                    <div
-                      className="btn-group"
-                      role="group"
-                      aria-label="Action Buttons"
-                    >
-                      <button
-                        className="btn btn-info"
-                        onClick={() => handelDelete(e.id)}
-                      >
+                    <div className="btn-group" role="group" aria-label="Action Buttons">
+                      <button className="btn btn-info" onClick={() => handleDelete(e.id)}>
                         Delete
                       </button>
-                      <Link to="/user/update/private/arts/:id">
-                        <button className="btn btn-info">
-                          Upload Image
-                        </button>
+                      <Link to={`/user/update/private/arts/${e.id}`}>
+                        <button className="btn btn-info">Upload Image</button>
                       </Link>
                       <Link to={`/user/get/private/arts/${e.id}`}>
                         <button className="btn btn-info">Edit</button>
@@ -111,7 +104,7 @@ export default function HomePrivate() {
             </tbody>
           </table>
         </div>
-        {/* Floating Buttons */}
+
         <div className="fixed-bottom d-flex justify-content-end m-4">
           <div className="btn-group">
             <Link to="/register">

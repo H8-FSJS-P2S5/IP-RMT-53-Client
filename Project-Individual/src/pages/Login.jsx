@@ -6,17 +6,17 @@ import Swal from "sweetalert2";
 
 
 export default function Login() {
-  const [email, setEmail] = useState("qwerty@qwerty.com");
-  const [password, setPassword] = useState("qwerty");
+  const [email, setEmail] = useState("admin@admin.com");
+  const [password, setPassword] = useState("adminadmin");
   const nav = useNavigate();
 
-  const handlingSuubmit = async (e) => {
+  const handlingSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await request({
         method: "post",
         url: "/login",
-        headers: {},
+        // headers: {},
         data: {
           email,
           password
@@ -31,6 +31,8 @@ export default function Login() {
         icon: "success",
       });
     } catch (error) {
+      console.log(error);
+      
       Swal.fire({
         title: "Error",
         text: error.response.data.message,
@@ -86,7 +88,7 @@ export default function Login() {
             {/* Tambahkan card wrapper dan efek bayangan */}
             <div className="card shadow p-4">
               <h2 className="text-center">Login</h2>
-              <form onSubmit={handlingSuubmit}>
+              <form onSubmit={handlingSubmit}>
                 <div className="mb-3">
                   <label htmlFor="input-email" className="form-label">
                     Email

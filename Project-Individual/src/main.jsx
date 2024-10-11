@@ -26,6 +26,9 @@ import GeminiForm from "./pages/Ai gemini";
 import AllOrigin from "./pages/Origin/AllOrigin";
 import UploadImageUrl from "./pages/UpdateImage";
 
+import { store } from "./store";
+import { Provider } from "react-redux";
+
 const isNotLogin = async () => {
   const access_token = localStorage.getItem("access_token");
   if (!access_token) {
@@ -133,8 +136,8 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <>
+  <Provider store={store}> 
     <ToastContainer />
     <RouterProvider router={router} />
-  </>
+  </Provider>
 );
